@@ -19,7 +19,7 @@ public class ShakeShackBurgerApplication {
 
 		System.out.println("[ ORDER MENU ]");
 		List<Menu> orderMenus = menuContext.getMenus("Order");
-		printMenu(orderMenus, nextNum); 
+		printMenu(orderMenus, nextNum);
 
 		handleMainMenuInput();
 	}

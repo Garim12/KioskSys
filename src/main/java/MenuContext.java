@@ -8,7 +8,7 @@ class MenuContext {
 	private Map<String, List<Item>> menuItems;
 	private List<Item> cart;
 	private double totalPrice;
-	private int orderNumber;
+	private int orderNumber; 
 
 	public MenuContext() {
 		menus = new HashMap<>();

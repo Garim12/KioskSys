@@ -4,7 +4,7 @@ public class Item extends Menu {
 
 	Item(String name, Double price, String description) {
 		super(name, description);
-		this.price = price;
+		this.price = price; //
 
 	}
 }

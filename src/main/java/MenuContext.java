@@ -71,7 +71,7 @@ class MenuContext {
 	public List<Item> getMenuItems(String key) {
 		return menuItems.get(key);
 	}
-
+	// 상품 생성 리스트 추가
 	public void addItemToMenu(String menu, Item item) {
 		List<Item> menuList = menuItems.get(menu);
 

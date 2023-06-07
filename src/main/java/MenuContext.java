@@ -8,7 +8,10 @@ class MenuContext {
 	private Map<String, List<Item>> menuItems;
 	private List<Item> cart;
 	private double totalPrice;
-	private int orderNumber; 
+	private int orderNumber;
+	private List<Order> waitingOrders; // add - 대기 주문 상품
+	private List<Order> completedOrders; // add - 완료된 주문 상품
+	private String requestContent;
 
 	public MenuContext() {
 		menus = new HashMap<>();
@@ -16,6 +19,8 @@ class MenuContext {
 		cart = new ArrayList<>();
 		totalPrice = 0.0;
 		orderNumber = 0;
+		waitingOrders = new ArrayList<>();
+		completedOrders = new ArrayList<>();
 
 		initializeMenuItems();
 	}
@@ -42,18 +47,16 @@ class MenuContext {
 		burgersMenus.add(new Item("Hamburger", 5.4, "비프패티를 기반으로 야채가 들어간 기본버거"));
 
 		List<Item> frozenCustardMenu = new ArrayList<>();
-		frozenCustardMenu.add(new Item("Frozen Custard Menu Item 1", 1.4, "Frozen Custard Menu Item 1 설명"));
-		frozenCustardMenu.add(new Item("Frozen Custard Menu Item 2", 1.0, "Frozen Custard Menu Item 2 설명"));
-		frozenCustardMenu.add(new Item("Frozen Custard Menu Item 3", 1.6, "Frozen Custard Menu Item 3 설명"));
-		frozenCustardMenu.add(new Item("Frozen Custard Menu Item 4", 2.1, "Frozen Custard Menu Item 4 설명"));
+		frozenCustardMenu.add(new Item("Vanilla Ice cream", 1.4, "It's a basic"));
+		frozenCustardMenu.add(new Item("Chocolate peanuts butter Ice cream", 1.0, "Delish thing"));
 
 		List<Item> drinksMenu = new ArrayList<>();
-		drinksMenu.add(new Item("Drinks Menu Item 1", 1.0, "Drinks Menu Item 1 설명"));
-		drinksMenu.add(new Item("Drinks Menu Item 2", 1.0, "Drinks Menu Item 2 설명"));
+		drinksMenu.add(new Item("Coke", 1.5, "Coca Cola"));
+		drinksMenu.add(new Item("Canada Dry", 1.5, "It's Ginger Ale"));
 
 		List<Item> beerMenu = new ArrayList<>();
-		beerMenu.add(new Item("Beer Menu Item 1", 3.0, "Beer Menu Item 1 설명"));
-		beerMenu.add(new Item("Beer Menu Item 2", 4.0, "Beer Menu Item 2 설명"));
+		beerMenu.add(new Item("Cass", 4.0, "Origin beer in Korea"));
+		beerMenu.add(new Item("Draft Beer", 4.0, "Every like it"));
 
 		menuItems.put("Burgers", burgersMenus);
 		menuItems.put("Frozen Custard", frozenCustardMenu);
@@ -67,6 +70,22 @@ class MenuContext {
 
 	public List<Item> getMenuItems(String key) {
 		return menuItems.get(key);
+	}
+
+	public List<Order> getWaitingOrders() {
+		return waitingOrders;
+	}
+
+	public List<Order> getCompletedOrders() {
+		return completedOrders;
+	}
+
+	public List<Item> getCart() {
+		return cart;
+	}
+
+	public int getOrderNumber() {
+		return orderNumber;
 	}
 
 	public void addToCart(Item menuItem) {
@@ -93,4 +112,16 @@ class MenuContext {
 		cart.clear();
 		totalPrice = 0.0;
 	}
+	
+	public void addToWaitingOrder(Order order){
+		// 주문 완료 후에 실행
+		waitingOrders.add(order);
+	}
+	
+	public void addToCompleteOrder(Order order) {
+		// 관리자 페이지에서 주문 처리 완료 후에 싫행
+		completedOrders.add(order);
+	}
+
+
 }

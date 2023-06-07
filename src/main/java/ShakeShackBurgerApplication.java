@@ -1,5 +1,5 @@
-import java.util.List;
-import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class ShakeShackBurgerApplication {
 	private static MenuContext menuContext;
@@ -12,6 +12,7 @@ public class ShakeShackBurgerApplication {
 	private static void displayMainMenu() {
 		System.out.println("SHAKESHACK BURGER 에 오신걸 환영합니다.");
 		System.out.println("아래 메뉴판을 보시고 메뉴를 골라 입력해주세요.\n");
+		// 메인 페이지에서 0번 관리자 페이지인거 명시 안함.
 
 		System.out.println("[ SHAKESHACK MENU ]");
 		List<Menu> mainMenus = menuContext.getMenus("Main");
@@ -35,6 +36,9 @@ public class ShakeShackBurgerApplication {
 		Scanner scanner = new Scanner(System.in);
 		int input = scanner.nextInt();
 		switch (input) {
+			case 0: // 메인페이지에서 0번 관리자 페이지인거 명시 안함.
+				displayAdminMenu();
+				break;
 			case 1:
 				displayBurgersMenu();
 				break;
@@ -60,6 +64,195 @@ public class ShakeShackBurgerApplication {
 		}
 	}
 
+	// 관리자 페이지 로드
+	private static void displayAdminMenu() {
+		Scanner scanner = new Scanner(System.in);
+
+		System.out.println("이곳은 관리자 페이지입니다.");
+
+		System.out.println("1. 대기주문 목록");
+		System.out.println("2. 완료주문 목록");
+		System.out.println("3. 상품 생성");
+		System.out.println("4. 상품 삭제");
+		System.out.println("항목을 선택하세요: ");
+
+		int input = scanner.nextInt();
+		switch (input) {
+			case 1:
+				displayWaitingOrder();
+				break;
+			case 2:
+				printCompletedOrder();
+				break;
+			case 3:
+				createItem();
+				break;
+			case 4:
+				deleteItem();
+				break;
+			default:
+				System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+				displayAdminMenu();
+				break;
+		}// switch() of the end
+	}// displayAdminMenu() of the end
+
+	// 모든 주문 상세 출력
+	private static void printOrders(List<Order> orders) {
+		for (int i=0; i<orders.size(); i++) {
+			printOrder(orders.get(i),i);
+			System.out.println();
+		}// for() of the end
+	}// printOrders() of the end
+
+	// 선택한 주문 내역 출력
+	private static void printOrder(Order selectedOrder, int input) {
+		int num = selectedOrder.getOrderNum();
+		System.out.println("대기 번호 : " + num);
+		System.out.println("주문 상품 목록 : ");
+		printMenuItems(selectedOrder.orderItems);
+		System.out.println("주문 총 가격 : " + selectedOrder.getTotalPrice());
+		System.out.println("요청 사항: " + selectedOrder.getRequestContent());
+
+		// 날짜는 ISO 8601 형식으로 ex)2016-10-27T17:13:40+00:00
+		Date date = selectedOrder.getOrderDate();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:XXX");
+		sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+		String dateString = sdf.format(date);
+		System.out.println("주문 일시: " + dateString);
+	}// printOrder() of the end
+
+
+
+	// 1. 대기 중인 주문 조회 및 완료 화면
+	private static void displayWaitingOrder() {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("========================================");
+		System.out.println("대기 중인 주문 목록입니다.\n");
+
+		System.out.println("[ 대기 주문 목록 ]");
+		List<Order> waitingOrders = menuContext.getWaitingOrders();
+		if(waitingOrders.isEmpty()){
+			System.out.println("대기 중인 주문이 없습니다.");
+			System.out.println("========================================");
+			displayMainMenu();
+		}else {
+			printOrders(waitingOrders);
+
+			System.out.println("완료할 주문 대기 번호를 입력해주세요.");
+			handleWaitingOrders(waitingOrders); // 주문 완료 처리할 메서드
+		}
+	}
+
+	// 주문 완료 처리할 메서드
+	private static void handleWaitingOrders(List<Order> orders) {
+		Scanner scanner = new Scanner(System.in);
+		int input = scanner.nextInt();
+
+		if (input >= 1 && input <= orders.size()) {
+			input--;
+			for(Order order : orders){
+				if(order.getOrderNum()==input){
+					Order selectedOrder = orders.get(input);
+					confirmCompleteOrder(selectedOrder,input);
+				}
+			}
+		} else {
+			System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+			handleWaitingOrders(orders);
+		}// if~else() of the end
+	}// handleWaitingOrders() of the end
+
+	// 주문 완료 처리
+	private static void confirmCompleteOrder(Order selectedOrder, int input) {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("아래 주문을 완료 처리 하시겠습니까?\n");
+		//if(menuContext.getWaitingOrders().contains(selectedOrder)) {
+			printOrder(selectedOrder, selectedOrder.getOrderNum());
+		//}
+
+		System.out.println("1. 완료      2. 메뉴판");
+		int confirm = scanner.nextInt();
+		if(confirm==1){
+			//menuContext.addToCompleteOrder(selectedOrder);
+			setCompleteOrder(selectedOrder); // 주문 완료 리스트에 넣기
+			resetWaitingOrder(selectedOrder); // 대기 주문 리스트에서 빼기
+			System.out.println("해당 주문을 완료 처리 하였습니다.");
+			System.out.println("========================================");
+			displayMainMenu();
+		}else if(confirm==2){
+			System.out.println("========================================");
+			displayMainMenu();
+		}else {
+			System.out.println("잘못된 입력입니다.");
+			confirmCompleteOrder(selectedOrder,input);
+		}// if~else() of the end
+	}// completeOrder() of the end
+
+	// 주문 완료 리스트에 넣기
+	private static void setCompleteOrder(Order selectedOrder) {
+		Order order = new Order();
+		Date now = new Date();
+
+		// List의 깊은 복사
+		List<Item> it = new ArrayList<>();
+		for(Item its : selectedOrder.getOrderItems()){
+			it.add(its);
+		}
+
+		order.setOrderItems(it);
+		order.setTotalPrice(selectedOrder.getTotalPrice());
+		order.setRequestContent(selectedOrder.getRequestContent());
+		order.setOrderDate(selectedOrder.getOrderDate()); // 주문 일시
+		order.setCompleteDate(now); // 완료 주문 일시
+		order.setOrderNum(selectedOrder.OrderNum);
+		menuContext.addToCompleteOrder(order);
+	}// setCompleteOrder() of the end
+
+	// 주문 완료 처리된 주문은 대기 리스트에서 제외
+	private static void resetWaitingOrder(Order selectedOrder) {
+		menuContext.getWaitingOrders().remove(selectedOrder);
+	}// resetWaitingOrder() of the end
+
+
+	// 2. 주문 완료 목록 출력
+	private static void printCompletedOrder() {
+		Scanner scanner = new Scanner(System.in);
+		
+		System.out.println("========================================");
+		System.out.println("처리 완료된 주문 목록입니다.\n");
+
+		System.out.println("[ 완료 주문 목록 ]");
+		printOrders(menuContext.getCompletedOrders());
+		System.out.println("========================================");
+
+		System.out.println("1. 메뉴판");
+		int input = scanner.nextInt();
+		if(input==1){
+			System.out.println("========================================");
+			displayMainMenu();
+		}else {
+			System.out.println("잘못된 입력입니다.");
+			System.out.println("========================================");
+			printCompletedOrder();
+		}// if~else() of the end
+	}// printCompletedOrder() of the end
+
+	// 3. 상품 삭제
+	private static void deleteItem() {
+
+		displayMainMenu();
+	}
+
+	// 4. 상품 생성
+	private static void createItem() {
+
+		displayMainMenu();
+	}
+
+
+
+
 	private static void displayBurgersMenu() {
 		System.out.println("SHAKESHACK BURGER 에 오신걸 환영합니다.");
 		System.out.println("아래 상품메뉴판을 보시고 상품을 골라 입력해주세요.\n");
@@ -74,7 +267,8 @@ public class ShakeShackBurgerApplication {
 	private static void handleMenuItemInput(List<Item> items) {
 		Scanner scanner = new Scanner(System.in);
 		int input = scanner.nextInt();
-		if (input >= 1 && input <= items.size()) {
+		if (input > 0 && input <= items.size()) {
+			input--;
 			Item selectedItem = items.get(input);
 			displayConfirmation(selectedItem);
 		} else {
@@ -89,6 +283,7 @@ public class ShakeShackBurgerApplication {
 			System.out.println(num + ". " + items.get(i).name + "   | " + items.get(i).price + " | " + items.get(i).description);
 		}
 	}
+
 	private static void displayFrozenCustardMenu() {
 		System.out.println("SHAKESHACK BURGER 에 오신걸 환영합니다.");
 		System.out.println("아래 상품메뉴판을 보시고 상품을 골라 입력해주세요.\n");
@@ -151,7 +346,6 @@ public class ShakeShackBurgerApplication {
 
 		System.out.println("[ Total ]");
 		System.out.println("W " + menuContext.getTotalPrice() + "\n");
-
 		System.out.println("1. 주문      2. 메뉴판");
 
 		handleOrderMenuInput();
@@ -170,13 +364,39 @@ public class ShakeShackBurgerApplication {
 		}
 	}
 
+	// 주문시 요청 사항 입력받기
 	private static void displayOrderComplete() {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("주문시 요청사항 메시지 : ");
+		String request = scanner.nextLine();
+
 		int orderNumber = menuContext.generateOrderNumber();
 		System.out.println("주문이 완료되었습니다!\n");
 		System.out.println("대기번호는 [ " + orderNumber + " ] 번 입니다.");
+		setWaitingOrder(request);
 
 		resetCartAndDisplayMainMenu();
 	}
+
+	// 주문한 내역 대기 주문 리스트에 입력하기
+	private static void setWaitingOrder(String request) {
+		Order order = new Order();
+		Date now = new Date();
+
+		// List의 깊은 복사
+		List<Item> it = new ArrayList<>();
+		for(Item its : menuContext.getCart()){
+			it.add(its);
+		}
+
+		order.setOrderItems(it);
+		order.setTotalPrice(menuContext.getTotalPrice());
+		order.setRequestContent(request); //요청 사항
+		order.setOrderDate(now);
+		order.generateOrderCnt();
+		order.setOrderNum(menuContext.getOrderNumber());
+		menuContext.addToWaitingOrder(order);
+	}// setWaitingOrder() of the end
 
 	private static void resetCartAndDisplayMainMenu() {
 		menuContext.resetCart();

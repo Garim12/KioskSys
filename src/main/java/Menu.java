@@ -11,6 +11,9 @@ class Menu {
 		this.description = description;
 	}
 
+	public Menu(String menu, String name, String description, Double price) {
+	}
+
 	// getter() , setter()
 	public void setItems(List<Item> items) {
 		this.items = items;
@@ -20,5 +23,8 @@ class Menu {
 		return items;
 	}
 
+	public String getName() {
+		return name;
+	}
 
 }

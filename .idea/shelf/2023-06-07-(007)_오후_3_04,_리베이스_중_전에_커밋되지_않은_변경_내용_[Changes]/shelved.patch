@@ -1,0 +1,865 @@
+Index: src/main/java/MenuContext.java
+===================================================================
+diff --git a/src/main/java/MenuContext.java b/src/main/java/MenuContext.java
+deleted file mode 100644
+--- a/src/main/java/MenuContext.java	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
++++ /dev/null	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
+@@ -1,127 +0,0 @@
+-import java.util.ArrayList;
+-import java.util.HashMap;
+-import java.util.List;
+-import java.util.Map;
+-
+-class MenuContext {
+-	private Map<String, List<Menu>> menus;
+-	private Map<String, List<Item>> menuItems;
+-	private List<Item> cart;
+-	private double totalPrice;
+-	private int orderNumber;
+-	private List<Order> waitingOrders; // add - 대기 주문 상품
+-	private List<Order> completedOrders; // add - 완료된 주문 상품
+-	private String requestContent;
+-
+-	public MenuContext() {
+-		menus = new HashMap<>();
+-		menuItems = new HashMap<>();
+-		cart = new ArrayList<>();
+-		totalPrice = 0.0;
+-		orderNumber = 0;
+-		waitingOrders = new ArrayList<>();
+-		completedOrders = new ArrayList<>();
+-
+-		initializeMenuItems();
+-	}
+-
+-	private void initializeMenuItems() {
+-		List<Menu> mainMenus = new ArrayList<>();
+-		mainMenus.add(new Menu("Burgers", "앵거스 비프 통살을 다져만든 버거"));
+-		mainMenus.add(new Menu("Forzen Custard", "매장에서 신선하게 만드는 아이스크림"));
+-		mainMenus.add(new Menu("Drinks", "매장에서 직접 만드는 음료"));
+-		mainMenus.add(new Menu("Beer", "뉴욕 브루클린 브루어리에서 양조한 맥주"));
+-
+-		List<Menu> orderMenus = new ArrayList<>();
+-		orderMenus.add(new Menu("Order", "장바구니를 확인 후 주문합니다."));
+-		orderMenus.add(new Menu("Cancel", "진행중인 주문을 취소합니다."));
+-
+-		menus.put("Main", mainMenus);
+-		menus.put("Order", orderMenus);
+-
+-		List<Item> burgersMenus = new ArrayList<>();
+-		burgersMenus.add(new Item("ShackBurger", 6.9, "토마토, 양상추, 쉑소스가 토핑된 치즈버거"));
+-		burgersMenus.add(new Item("SmokeShack", 8.9, "베이컨, 체리 페퍼에 쉑소스가 토핑된 치즈버거"));
+-		burgersMenus.add(new Item("Shroom Burger", 9.4, "몬스터 치즈와 체다 치즈로 속을 채운 베지테리안 버거"));
+-		burgersMenus.add(new Item("Cheeseburger", 6.9, "포테이토 번과 비프패티, 치즈가 토핑된 치즈버거"));
+-		burgersMenus.add(new Item("Hamburger", 5.4, "비프패티를 기반으로 야채가 들어간 기본버거"));
+-
+-		List<Item> frozenCustardMenu = new ArrayList<>();
+-		frozenCustardMenu.add(new Item("Vanilla Ice cream", 1.4, "It's a basic"));
+-		frozenCustardMenu.add(new Item("Chocolate peanuts butter Ice cream", 1.0, "Delish thing"));
+-
+-		List<Item> drinksMenu = new ArrayList<>();
+-		drinksMenu.add(new Item("Coke", 1.5, "Coca Cola"));
+-		drinksMenu.add(new Item("Canada Dry", 1.5, "It's Ginger Ale"));
+-
+-		List<Item> beerMenu = new ArrayList<>();
+-		beerMenu.add(new Item("Cass", 4.0, "Origin beer in Korea"));
+-		beerMenu.add(new Item("Draft Beer", 4.0, "Every like it"));
+-
+-		menuItems.put("Burgers", burgersMenus);
+-		menuItems.put("Frozen Custard", frozenCustardMenu);
+-		menuItems.put("Drinks", drinksMenu);
+-		menuItems.put("Beer", beerMenu);
+-	}
+-
+-	public List<Menu> getMenus(String key) {
+-		return menus.get(key);
+-	}
+-
+-	public List<Item> getMenuItems(String key) {
+-		return menuItems.get(key);
+-	}
+-
+-	public List<Order> getWaitingOrders() {
+-		return waitingOrders;
+-	}
+-
+-	public List<Order> getCompletedOrders() {
+-		return completedOrders;
+-	}
+-
+-	public List<Item> getCart() {
+-		return cart;
+-	}
+-
+-	public int getOrderNumber() {
+-		return orderNumber;
+-	}
+-
+-	public void addToCart(Item menuItem) {
+-		cart.add(menuItem);
+-		totalPrice += menuItem.price;
+-	}
+-
+-	public void displayCart() {
+-		for (Item item : cart) {
+-			System.out.println(item.name + "   | " + item.price + " | " + item.description);
+-		}
+-	}
+-
+-	public double getTotalPrice() {
+-		return totalPrice;
+-	}
+-
+-	public int generateOrderNumber() {
+-		orderNumber++;
+-		return orderNumber;
+-	}
+-
+-	public void resetCart() {
+-		cart.clear();
+-		totalPrice = 0.0;
+-	}
+-	
+-	public void addToWaitingOrder(Order order){
+-		// 주문 완료 후에 실행
+-		waitingOrders.add(order);
+-	}
+-	
+-	public void addToCompleteOrder(Order order) {
+-		// 관리자 페이지에서 주문 처리 완료 후에 싫행
+-		completedOrders.add(order);
+-	}
+-
+-
+-}
+\ No newline at end of file
+Index: src/main/java/Order.java
+===================================================================
+diff --git a/src/main/java/Order.java b/src/main/java/Order.java
+deleted file mode 100644
+--- a/src/main/java/Order.java	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
++++ /dev/null	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
+@@ -1,76 +0,0 @@
+-import java.util.Date;
+-import java.util.List;
+-
+-public class Order {
+-// Store 클래스는 4번 필수 요구 사항
+-
+-    int OrderNum; // 주문 대기 번호
+-    List<Item> orderItems; // 주문 상품 목록
+-    int orderCnt; // 총 수량
+-    double totalPrice; // 총 가격
+-    String requestContent; // 주문 요청 사항
+-    Date orderDate; // 주문 일시
+-    Date completeDate; // 완료주문 일시
+-
+-
+-    // getter() , setter()
+-    public List<Item> getOrderItems() {
+-        return orderItems;
+-    }
+-
+-    public int getOrderCnt() {
+-        return orderCnt;
+-    }
+-
+-    public double getTotalPrice() {
+-        return totalPrice;
+-    }
+-
+-    public String getRequestContent() {
+-        return requestContent;
+-    }
+-
+-    public Date getOrderDate() {
+-        return orderDate;
+-    }
+-
+-    public Date getCompleteDate() {
+-        return completeDate;
+-    }
+-
+-    public void setOrderItems(List<Item> orderItems) {
+-        this.orderItems = orderItems;
+-    }
+-
+-    public void setOrderCnt(int orderCnt) {
+-        this.orderCnt = orderCnt;
+-    }
+-
+-    public void setTotalPrice(double totalPrice) {
+-        this.totalPrice = totalPrice;
+-    }
+-
+-    public void setRequestContent(String requestContent) {
+-        this.requestContent = requestContent;
+-    }
+-
+-    public void setOrderDate(Date orderDate) {
+-        this.orderDate = orderDate;
+-    }
+-
+-    public void setCompleteDate(Date completeDate) {
+-        this.completeDate = completeDate;
+-    }
+-
+-    public int getOrderNum() {
+-        return OrderNum;
+-    }
+-
+-    public void setOrderNum(int orderNum) {
+-        OrderNum = orderNum;
+-    }
+-
+-    public void generateOrderCnt() {
+-        this.orderCnt = orderItems.size();
+-    }
+-}
+Index: src/main/java/ShakeShackBurgerApplication.java
+===================================================================
+diff --git a/src/main/java/ShakeShackBurgerApplication.java b/src/main/java/ShakeShackBurgerApplication.java
+deleted file mode 100644
+--- a/src/main/java/ShakeShackBurgerApplication.java	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
++++ /dev/null	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
+@@ -1,434 +0,0 @@
+-import java.text.SimpleDateFormat;
+-import java.util.*;
+-
+-public class ShakeShackBurgerApplication {
+-	private static MenuContext menuContext;
+-
+-	public static void main(String[] args) {
+-		menuContext = new MenuContext();
+-		displayMainMenu();
+-	}
+-
+-	private static void displayMainMenu() {
+-		System.out.println("SHAKESHACK BURGER 에 오신걸 환영합니다.");
+-		System.out.println("아래 메뉴판을 보시고 메뉴를 골라 입력해주세요.\n");
+-		// 메인 페이지에서 0번 관리자 페이지인거 명시 안함.
+-
+-		System.out.println("[ SHAKESHACK MENU ]");
+-		List<Menu> mainMenus = menuContext.getMenus("Main");
+-		int nextNum = printMenu(mainMenus, 1);
+-
+-		System.out.println("[ ORDER MENU ]");
+-		List<Menu> orderMenus = menuContext.getMenus("Order");
+-		printMenu(orderMenus, nextNum);
+-
+-		handleMainMenuInput();
+-	}
+-
+-	private static int printMenu(List<Menu> menus, int num) {
+-		for (int i=0; i<menus.size(); i++) {
+-			System.out.println(num++ + ". " + menus.get(i).name + "   | " + menus.get(i).description);
+-		}
+-		return num;
+-	}
+-
+-	private static void handleMainMenuInput() {
+-		Scanner scanner = new Scanner(System.in);
+-		int input = scanner.nextInt();
+-		switch (input) {
+-			case 0: // 메인페이지에서 0번 관리자 페이지인거 명시 안함.
+-				displayAdminMenu();
+-				break;
+-			case 1:
+-				displayBurgersMenu();
+-				break;
+-			case 2:
+-				displayFrozenCustardMenu();
+-				break;
+-			case 3:
+-				displayDrinksMenu();
+-				break;
+-			case 4:
+-				displayBeerMenu();
+-				break;
+-			case 5:
+-				displayOrderMenu();
+-				break;
+-			case 6:
+-				handleCancelMenuInput();
+-				break;
+-			default:
+-				System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+-				handleMainMenuInput();
+-				break;
+-		}
+-	}
+-
+-	// 관리자 페이지 로드
+-	private static void displayAdminMenu() {
+-		Scanner scanner = new Scanner(System.in);
+-
+-		System.out.println("이곳은 관리자 페이지입니다.");
+-
+-		System.out.println("1. 대기주문 목록");
+-		System.out.println("2. 완료주문 목록");
+-		System.out.println("3. 상품 생성");
+-		System.out.println("4. 상품 삭제");
+-		System.out.println("항목을 선택하세요: ");
+-
+-		int input = scanner.nextInt();
+-		switch (input) {
+-			case 1:
+-				displayWaitingOrder();
+-				break;
+-			case 2:
+-				printCompletedOrder();
+-				break;
+-			case 3:
+-				createItem();
+-				break;
+-			case 4:
+-				deleteItem();
+-				break;
+-			default:
+-				System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+-				displayAdminMenu();
+-				break;
+-		}// switch() of the end
+-	}// displayAdminMenu() of the end
+-
+-	// 모든 주문 상세 출력
+-	private static void printOrders(List<Order> orders) {
+-		for (int i=0; i<orders.size(); i++) {
+-			printOrder(orders.get(i),i);
+-			System.out.println();
+-		}// for() of the end
+-	}// printOrders() of the end
+-
+-	// 선택한 주문 내역 출력
+-	private static void printOrder(Order selectedOrder, int input) {
+-		int num = selectedOrder.getOrderNum();
+-		System.out.println("대기 번호 : " + num);
+-		System.out.println("주문 상품 목록 : ");
+-		printMenuItems(selectedOrder.orderItems);
+-		System.out.println("주문 총 가격 : " + selectedOrder.getTotalPrice());
+-		System.out.println("요청 사항: " + selectedOrder.getRequestContent());
+-
+-		// 날짜는 ISO 8601 형식으로 ex)2016-10-27T17:13:40+00:00
+-		Date date = selectedOrder.getOrderDate();
+-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:XXX");
+-		sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+-		String dateString = sdf.format(date);
+-		System.out.println("주문 일시: " + dateString);
+-	}// printOrder() of the end
+-
+-
+-
+-	// 1. 대기 중인 주문 조회 및 완료 화면
+-	private static void displayWaitingOrder() {
+-		Scanner scanner = new Scanner(System.in);
+-		System.out.println("========================================");
+-		System.out.println("대기 중인 주문 목록입니다.\n");
+-
+-		System.out.println("[ 대기 주문 목록 ]");
+-		List<Order> waitingOrders = menuContext.getWaitingOrders();
+-		if(waitingOrders.isEmpty()){
+-			System.out.println("대기 중인 주문이 없습니다.");
+-			System.out.println("========================================");
+-			displayMainMenu();
+-		}else {
+-			printOrders(waitingOrders);
+-
+-			System.out.println("완료할 주문 대기 번호를 입력해주세요.");
+-			handleWaitingOrders(waitingOrders); // 주문 완료 처리할 메서드
+-		}
+-	}
+-
+-	// 주문 완료 처리할 메서드
+-	private static void handleWaitingOrders(List<Order> orders) {
+-		Scanner scanner = new Scanner(System.in);
+-		int input = scanner.nextInt();
+-
+-		if (input >= 1 && input <= orders.size()) {
+-			input--;
+-			for(Order order : orders){
+-				if(order.getOrderNum()==input){
+-					Order selectedOrder = orders.get(input);
+-					confirmCompleteOrder(selectedOrder,input);
+-				}
+-			}
+-		} else {
+-			System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+-			handleWaitingOrders(orders);
+-		}// if~else() of the end
+-	}// handleWaitingOrders() of the end
+-
+-	// 주문 완료 처리
+-	private static void confirmCompleteOrder(Order selectedOrder, int input) {
+-		Scanner scanner = new Scanner(System.in);
+-		System.out.println("아래 주문을 완료 처리 하시겠습니까?\n");
+-		//if(menuContext.getWaitingOrders().contains(selectedOrder)) {
+-			printOrder(selectedOrder, selectedOrder.getOrderNum());
+-		//}
+-
+-		System.out.println("1. 완료      2. 메뉴판");
+-		int confirm = scanner.nextInt();
+-		if(confirm==1){
+-			//menuContext.addToCompleteOrder(selectedOrder);
+-			setCompleteOrder(selectedOrder); // 주문 완료 리스트에 넣기
+-			resetWaitingOrder(selectedOrder); // 대기 주문 리스트에서 빼기
+-			System.out.println("해당 주문을 완료 처리 하였습니다.");
+-			System.out.println("========================================");
+-			displayMainMenu();
+-		}else if(confirm==2){
+-			System.out.println("========================================");
+-			displayMainMenu();
+-		}else {
+-			System.out.println("잘못된 입력입니다.");
+-			confirmCompleteOrder(selectedOrder,input);
+-		}// if~else() of the end
+-	}// completeOrder() of the end
+-
+-	// 주문 완료 리스트에 넣기
+-	private static void setCompleteOrder(Order selectedOrder) {
+-		Order order = new Order();
+-		Date now = new Date();
+-
+-		// List의 깊은 복사
+-		List<Item> it = new ArrayList<>();
+-		for(Item its : selectedOrder.getOrderItems()){
+-			it.add(its);
+-		}
+-
+-		order.setOrderItems(it);
+-		order.setTotalPrice(selectedOrder.getTotalPrice());
+-		order.setRequestContent(selectedOrder.getRequestContent());
+-		order.setOrderDate(selectedOrder.getOrderDate()); // 주문 일시
+-		order.setCompleteDate(now); // 완료 주문 일시
+-		order.setOrderNum(selectedOrder.OrderNum);
+-		menuContext.addToCompleteOrder(order);
+-	}// setCompleteOrder() of the end
+-
+-	// 주문 완료 처리된 주문은 대기 리스트에서 제외
+-	private static void resetWaitingOrder(Order selectedOrder) {
+-		menuContext.getWaitingOrders().remove(selectedOrder);
+-	}// resetWaitingOrder() of the end
+-
+-
+-	// 2. 주문 완료 목록 출력
+-	private static void printCompletedOrder() {
+-		Scanner scanner = new Scanner(System.in);
+-		
+-		System.out.println("========================================");
+-		System.out.println("처리 완료된 주문 목록입니다.\n");
+-
+-		System.out.println("[ 완료 주문 목록 ]");
+-		printOrders(menuContext.getCompletedOrders());
+-		System.out.println("========================================");
+-
+-		System.out.println("1. 메뉴판");
+-		int input = scanner.nextInt();
+-		if(input==1){
+-			System.out.println("========================================");
+-			displayMainMenu();
+-		}else {
+-			System.out.println("잘못된 입력입니다.");
+-			System.out.println("========================================");
+-			printCompletedOrder();
+-		}// if~else() of the end
+-	}// printCompletedOrder() of the end
+-
+-	// 3. 상품 삭제
+-	private static void deleteItem() {
+-
+-		displayMainMenu();
+-	}
+-
+-	// 4. 상품 생성
+-	private static void createItem() {
+-
+-		displayMainMenu();
+-	}
+-
+-
+-
+-
+-	private static void displayBurgersMenu() {
+-		System.out.println("SHAKESHACK BURGER 에 오신걸 환영합니다.");
+-		System.out.println("아래 상품메뉴판을 보시고 상품을 골라 입력해주세요.\n");
+-
+-		System.out.println("[ Burgers MENU ]");
+-		List<Item> burgerItems = menuContext.getMenuItems("Burgers");
+-		printMenuItems(burgerItems);
+-
+-		handleMenuItemInput(burgerItems);
+-	}
+-
+-	private static void handleMenuItemInput(List<Item> items) {
+-		Scanner scanner = new Scanner(System.in);
+-		int input = scanner.nextInt();
+-		if (input > 0 && input <= items.size()) {
+-			input--;
+-			Item selectedItem = items.get(input);
+-			displayConfirmation(selectedItem);
+-		} else {
+-			System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+-			handleMenuItemInput(items);
+-		}
+-	}
+-
+-	private static void printMenuItems(List<Item> items) {
+-		for (int i=0; i<items.size(); i++) {
+-			int num = i + 1;
+-			System.out.println(num + ". " + items.get(i).name + "   | " + items.get(i).price + " | " + items.get(i).description);
+-		}
+-	}
+-
+-	private static void displayFrozenCustardMenu() {
+-		System.out.println("SHAKESHACK BURGER 에 오신걸 환영합니다.");
+-		System.out.println("아래 상품메뉴판을 보시고 상품을 골라 입력해주세요.\n");
+-
+-		System.out.println("[ Frozen Custard MENU ]");
+-		List<Item> frozenCustardItems = menuContext.getMenuItems("Frozen Custard");
+-		printMenuItems(frozenCustardItems);
+-
+-		handleMenuItemInput(frozenCustardItems);
+-	}
+-
+-	private static void displayDrinksMenu() {
+-		System.out.println("SHAKESHACK BURGER 에 오신걸 환영합니다.");
+-		System.out.println("아래 상품메뉴판을 보시고 상품을 골라 입력해주세요.\n");
+-
+-		System.out.println("[ Drinks MENU ]");
+-		List<Item> drinkItems = menuContext.getMenuItems("Drinks");
+-		printMenuItems(drinkItems);
+-
+-		handleMenuItemInput(drinkItems);
+-	}
+-
+-	private static void displayBeerMenu() {
+-		System.out.println("SHAKESHACK BURGER 에 오신걸 환영합니다.");
+-		System.out.println("아래 상품메뉴판을 보시고 상품을 골라 입력해주세요.\n");
+-
+-		System.out.println("[ Beer MENU ]");
+-		List<Item> beerItems = menuContext.getMenuItems("Beer");
+-		printMenuItems(beerItems);
+-
+-		handleMenuItemInput(beerItems);
+-	}
+-
+-	private static void displayConfirmation(Item menuItem) {
+-		System.out.println(menuItem.name + "   | " + menuItem.price + " | " + menuItem.description);
+-		System.out.println("위 메뉴를 장바구니에 추가하시겠습니까?");
+-		System.out.println("1. 확인        2. 취소");
+-
+-		handleConfirmationInput(menuItem);
+-	}
+-
+-	private static void handleConfirmationInput(Item menuItem) {
+-		Scanner scanner = new Scanner(System.in);
+-		int input = scanner.nextInt();
+-		if (input == 1) {
+-			menuContext.addToCart(menuItem);
+-			System.out.println("장바구니에 추가되었습니다.");
+-			displayMainMenu();
+-		} else if (input == 2) {
+-			displayMainMenu();
+-		} else {
+-			System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+-			handleConfirmationInput(menuItem);
+-		}
+-	}
+-
+-	private static void displayOrderMenu() {
+-		System.out.println("아래와 같이 주문 하시겠습니까?\n");
+-		menuContext.displayCart();
+-
+-		System.out.println("[ Total ]");
+-		System.out.println("W " + menuContext.getTotalPrice() + "\n");
+-		System.out.println("1. 주문      2. 메뉴판");
+-
+-		handleOrderMenuInput();
+-	}
+-
+-	private static void handleOrderMenuInput() {
+-		Scanner scanner = new Scanner(System.in);
+-		int input = scanner.nextInt();
+-		if (input == 1) {
+-			displayOrderComplete();
+-		} else if (input == 2) {
+-			displayMainMenu();
+-		} else {
+-			System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+-			handleOrderMenuInput();
+-		}
+-	}
+-
+-	// 주문시 요청 사항 입력받기
+-	private static void displayOrderComplete() {
+-		Scanner scanner = new Scanner(System.in);
+-		System.out.println("주문시 요청사항 메시지 : ");
+-		String request = scanner.nextLine();
+-
+-		int orderNumber = menuContext.generateOrderNumber();
+-		System.out.println("주문이 완료되었습니다!\n");
+-		System.out.println("대기번호는 [ " + orderNumber + " ] 번 입니다.");
+-		setWaitingOrder(request);
+-
+-		resetCartAndDisplayMainMenu();
+-	}
+-
+-	// 주문한 내역 대기 주문 리스트에 입력하기
+-	private static void setWaitingOrder(String request) {
+-		Order order = new Order();
+-		Date now = new Date();
+-
+-		// List의 깊은 복사
+-		List<Item> it = new ArrayList<>();
+-		for(Item its : menuContext.getCart()){
+-			it.add(its);
+-		}
+-
+-		order.setOrderItems(it);
+-		order.setTotalPrice(menuContext.getTotalPrice());
+-		order.setRequestContent(request); //요청 사항
+-		order.setOrderDate(now);
+-		order.generateOrderCnt();
+-		order.setOrderNum(menuContext.getOrderNumber());
+-		menuContext.addToWaitingOrder(order);
+-	}// setWaitingOrder() of the end
+-
+-	private static void resetCartAndDisplayMainMenu() {
+-		menuContext.resetCart();
+-		System.out.println("(3초후 메뉴판으로 돌아갑니다.)");
+-		try {
+-			Thread.sleep(3000); // 3초 대기
+-		} catch (InterruptedException e) {
+-			e.printStackTrace();
+-		}
+-		displayMainMenu();
+-	}
+-
+-	private static void handleCancelMenuInput() {
+-		System.out.println("주문을 취소하시겠습니까?");
+-		System.out.println("1. 확인        2. 취소");
+-
+-		handleCancelConfirmationInput();
+-	}
+-
+-	private static void handleCancelConfirmationInput() {
+-		Scanner scanner = new Scanner(System.in);
+-		int input = scanner.nextInt();
+-		if (input == 1) {
+-			menuContext.resetCart();
+-			System.out.println("주문이 취소되었습니다.");
+-			displayMainMenu();
+-		} else if (input == 2) {
+-			displayMainMenu();
+-		} else {
+-			System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+-			handleCancelConfirmationInput();
+-		}
+-	}
+-}
+-
+Index: src/main/java/Store.java
+===================================================================
+diff --git a/src/main/java/Store.java b/src/main/java/Store.java
+deleted file mode 100644
+--- a/src/main/java/Store.java	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
++++ /dev/null	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
+@@ -1,25 +0,0 @@
+-public class Store {
+-// Store 클래스는 1번 필수 요구 사항
+-
+-    private Menu menu;
+-    private Item item;
+-
+-    // getter() , setter()
+-    public Menu getMenu() {
+-        return menu;
+-    }
+-
+-    public Item getItem() {
+-        return item;
+-    }
+-
+-    public void setMenu(Menu menu) {
+-        this.menu = menu;
+-    }
+-
+-    public void setItem(Item item) {
+-        this.item = item;
+-    }
+-
+-
+-}
+Index: src/main/java/Menu.java
+===================================================================
+diff --git a/src/main/java/Menu.java b/src/main/java/Menu.java
+deleted file mode 100644
+--- a/src/main/java/Menu.java	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
++++ /dev/null	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
+@@ -1,24 +0,0 @@
+-import java.util.List;
+-
+-class Menu {
+-	String name;
+-	String description;
+-	List<Item> items; // 2번 필수 요구 사항
+-
+-	// 생성자 메서드 영역
+-	Menu(String name, String description) {
+-		this.name = name;
+-		this.description = description;
+-	}
+-
+-	// getter() , setter()
+-	public void setItems(List<Item> items) {
+-		this.items = items;
+-	}
+-
+-	public List<Item> getItems() {
+-		return items;
+-	}
+-
+-
+-}
+Index: src/main/java/Item.java
+===================================================================
+diff --git a/src/main/java/Item.java b/src/main/java/Item.java
+deleted file mode 100644
+--- a/src/main/java/Item.java	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
++++ /dev/null	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
+@@ -1,10 +0,0 @@
+-public class Item extends Menu {
+-
+-	Double price;
+-
+-	Item(String name, Double price, String description) {
+-		super(name, description);
+-		this.price = price; //
+-
+-	}
+-}
+Index: .idea/runConfigurations.xml
+===================================================================
+diff --git a/.idea/runConfigurations.xml b/.idea/runConfigurations.xml
+deleted file mode 100644
+--- a/.idea/runConfigurations.xml	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
++++ /dev/null	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
+@@ -1,10 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="RunConfigurationProducerService">
+-    <option name="ignoredProducers">
+-      <set>
+-        <option value="com.android.tools.idea.compose.preview.runconfiguration.ComposePreviewRunConfigurationProducer" />
+-      </set>
+-    </option>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"e9636530-f211-4ff0-b2d0-d87eeac22cbc\" name=\"Changes\" comment=\"\">\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/Order.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/Store.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/Menu.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/Menu.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/ShakeShackBurgerApplication.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/ShakeShackBurgerApplication.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"ExternalProjectsData\">\r\n    <projectState path=\"$PROJECT_DIR$\">\r\n      <ProjectState />\r\n    </projectState>\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"2QYO8x2Xdu4go4LYF3fC3vba5kf\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">\r\n    <property name=\"RunOnceActivity.OpenProjectViewOnStart\" value=\"true\" />\r\n    <property name=\"RunOnceActivity.ShowReadmeOnStart\" value=\"true\" />\r\n    <property name=\"SHARE_PROJECT_CONFIGURATION_FILES\" value=\"true\" />\r\n    <property name=\"WebServerToolWindowFactoryState\" value=\"false\" />\r\n    <property name=\"last_opened_file_path\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"ShakeShackBurgerApplication\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"ShakeShackBurgerApplication\" />\r\n      <module name=\"ShakeShackBurger.main\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Application.ShakeShackBurgerApplication\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"e9636530-f211-4ff0-b2d0-d87eeac22cbc\" name=\"Changes\" comment=\"\" />\r\n      <created>1685526892813</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1685526892813</updated>\r\n      <workItem from=\"1685526894510\" duration=\"2409000\" />\r\n      <workItem from=\"1685927050919\" duration=\"3116000\" />\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n    <option name=\"oldMeFiltersMigrated\" value=\"true\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision edc85c3470fbd146aeb6b2cd60c11372f7a691c8)
++++ b/.idea/workspace.xml	(date 1686117778126)
+@@ -5,10 +5,9 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="e9636530-f211-4ff0-b2d0-d87eeac22cbc" name="Changes" comment="">
+-      <change afterPath="$PROJECT_DIR$/src/main/java/Order.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/Store.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations.xml" beforeDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/Menu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Menu.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Order.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/ShakeShackBurgerApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ShakeShackBurgerApplication.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+@@ -29,7 +28,34 @@
+     </option>
+   </component>
+   <component name="Git.Settings">
++    <option name="RECENT_BRANCH_BY_REPOSITORY">
++      <map>
++        <entry key="$PROJECT_DIR$" value="edc85c3470fbd146aeb6b2cd60c11372f7a691c8" />
++      </map>
++    </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
++    <option name="UPDATE_TYPE" value="REBASE" />
++  </component>
++  <component name="GitToolBoxStore">
++    <option name="recentBranches">
++      <RecentBranches>
++        <option name="branchesForRepo">
++          <list>
++            <RecentBranchesForRepo>
++              <option name="branches">
++                <list>
++                  <RecentBranch>
++                    <option name="branchName" value="main" />
++                    <option name="lastUsedInstant" value="1686117650" />
++                  </RecentBranch>
++                </list>
++              </option>
++              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
++            </RecentBranchesForRepo>
++          </list>
++        </option>
++      </RecentBranches>
++    </option>
+   </component>
+   <component name="MarkdownSettingsMigration">
+     <option name="stateVersion" value="1" />
+@@ -40,13 +66,16 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">
+-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+-    <property name="WebServerToolWindowFactoryState" value="false" />
+-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+-  </component>
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "WebServerToolWindowFactoryState": "false",
++    "git-widget-placeholder": "main",
++    "node.js.detected.package.eslint": "true",
++    "node.js.selected.package.eslint": "(autodetect)",
++    "node.js.selected.package.tslint": "(autodetect)",
++    "vue.rearranger.settings.migration": "true"
++  }
++}]]></component>
+   <component name="RunManager">
+     <configuration name="ShakeShackBurgerApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+       <option name="MAIN_CLASS_NAME" value="ShakeShackBurgerApplication" />
+@@ -57,7 +86,7 @@
+     </configuration>
+     <recent_temporary>
+       <list>
+-        <item itemvalue="Application.ShakeShackBurgerApplication" />
++        <item itemvalue="애플리케이션.ShakeShackBurgerApplication" />
+       </list>
+     </recent_temporary>
+   </component>
+@@ -71,6 +100,8 @@
+       <updated>1685526892813</updated>
+       <workItem from="1685526894510" duration="2409000" />
+       <workItem from="1685927050919" duration="3116000" />
++      <workItem from="1686101030191" duration="36000" />
++      <workItem from="1686117436718" duration="342000" />
+     </task>
+     <servers />
+   </component>
+@@ -87,6 +118,5 @@
+         </entry>
+       </map>
+     </option>
+-    <option name="oldMeFiltersMigrated" value="true" />
+   </component>
+ </project>
+\ No newline at end of file

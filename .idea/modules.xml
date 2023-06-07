@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ShakeShackBurger.iml" filepath="$PROJECT_DIR$/.idea/modules/ShakeShackBurger.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ShakeShackBurger.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ShakeShackBurger.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ShakeShackBurger.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ShakeShackBurger.test.iml" />
+    </modules>
+  </component>
+</project>

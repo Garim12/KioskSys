@@ -71,6 +71,17 @@ class MenuContext {
 	public List<Item> getMenuItems(String key) {
 		return menuItems.get(key);
 	}
+	// 상품 생성 리스트 추가
+	public void addItemToMenu(String menu, Item item) {
+		List<Item> menuList = menuItems.get(menu);
+
+		if (menuList == null) {
+			menuList = new ArrayList<>();
+			menuItems.put(menu, menuList);
+		}
+
+		menuList.add(item);
+	}
 
 	public List<Order> getWaitingOrders() {
 		return waitingOrders;
@@ -122,5 +133,4 @@ class MenuContext {
 		// 관리자 페이지에서 주문 처리 완료 후에 싫행
 		completedOrders.add(order);
 	}
-
 }

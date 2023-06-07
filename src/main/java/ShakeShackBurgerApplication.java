@@ -74,7 +74,7 @@ public class ShakeShackBurgerApplication {
 		System.out.println("2. 완료주문 목록");
 		System.out.println("3. 상품 생성");
 		System.out.println("4. 상품 삭제");
-		System.out.println("항목을 선택하세요: ");
+		System.out.print("항목을 선택하세요: ");
 
 		int input = scanner.nextInt();
 		switch (input) {
@@ -90,6 +90,8 @@ public class ShakeShackBurgerApplication {
 			case 4:
 				deleteItem();
 				break;
+			case 5:
+				displayMainMenu();
 			default:
 				System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
 				displayAdminMenu();
@@ -251,7 +253,41 @@ public class ShakeShackBurgerApplication {
 
 	// 4. 상품 생성
 	private static void createItem() {
+		Scanner scanner = new Scanner(System.in);
 
+		System.out.println("새로운 상품 정보를 입력해주세요.");
+		System.out.print("메뉴: ");
+		int menu = scanner.nextInt();
+		scanner.nextLine();
+		System.out.print("이름: ");
+		String name = scanner.nextLine();
+		System.out.print("설명: ");
+		String description = scanner.nextLine();
+		System.out.print("가격: ");
+		Double price = scanner.nextDouble();
+
+		// 새로운 상품 생성
+		Item newItem = new Item(name, price, description);
+
+		switch (menu) {
+			case 1:
+				menuContext.addItemToMenu("Burgers", newItem);
+				break;
+			case 2:
+				menuContext.addItemToMenu("Frozen Custard", newItem);
+				break;
+			case 3:
+				menuContext.addItemToMenu("Drinks", newItem);
+				break;
+			case 4:
+				menuContext.addItemToMenu("Beer", newItem);
+				break;
+			default:
+				System.out.println("잘못된 메뉴입니다.");
+				break;
+		}
+
+		System.out.println("새로운 상품이 생성되었습니다.");
 		displayMainMenu();
 	}
 

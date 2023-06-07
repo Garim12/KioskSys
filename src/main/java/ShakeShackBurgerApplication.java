@@ -125,7 +125,6 @@ public class ShakeShackBurgerApplication {
 	}// printOrder() of the end
 
 
-
 	// 1. 대기 중인 주문 조회 및 완료 화면
 	private static void displayWaitingOrder() {
 		Scanner scanner = new Scanner(System.in);
@@ -225,7 +224,7 @@ public class ShakeShackBurgerApplication {
 	// 2. 주문 완료 목록 출력
 	private static void printCompletedOrder() {
 		Scanner scanner = new Scanner(System.in);
-		
+
 		System.out.println("========================================");
 		System.out.println("처리 완료된 주문 목록입니다.\n");
 
@@ -247,8 +246,44 @@ public class ShakeShackBurgerApplication {
 
 	// 3. 상품 삭제
 	private static void deleteItem() {
+		Scanner scanner = new Scanner(System.in);
 
-		displayMainMenu();
+		System.out.println("삭제할 상품 정보를 입력해주세요.");
+		System.out.print("메뉴: ");
+		int menu = scanner.nextInt();
+		scanner.nextLine();
+
+		System.out.print("이름: ");
+		String name = scanner.nextLine();
+
+		if (menu >= 1 && menu <= 4) {
+			boolean isMenuExist = findDeleteMenu(menu, name);
+			if (isMenuExist) {
+				System.out.println("상품이 삭제되었습니다.\n");
+				displayMainMenu();
+			}
+			else {
+				System.out.println("해당 상품이 존재하지 않습니다.\n");
+				deleteItem();
+			}
+		} else {
+			System.out.println("잘못된 메뉴입니다.");
+			deleteItem();
+		}
+	}
+
+	public static boolean findDeleteMenu(int menu, String name) {
+		ArrayList<String> menuNames = new ArrayList<>(Arrays.asList("Burgers", "Frozen Custard", "Drinks", "Beer"));
+		for (Item item : menuContext.getMenuItems(menuNames.get(menu - 1))) {
+			if (item.getName().equals(name)) {
+				if (!menuContext.getMenuItems(menuNames.get(menu - 1)).isEmpty()) {
+					menuContext.deleteItemFromMenu(menuNames.get(menu - 1), item);
+					return true;
+				}
+				else return false;
+			}
+		}
+		return false;
 	}
 
 	// 4. 상품 생성
@@ -290,8 +325,6 @@ public class ShakeShackBurgerApplication {
 		System.out.println("새로운 상품이 생성되었습니다.");
 		displayMainMenu();
 	}
-
-
 
 
 	private static void displayBurgersMenu() {

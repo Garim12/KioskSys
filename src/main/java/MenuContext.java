@@ -71,6 +71,7 @@ class MenuContext {
 	public List<Item> getMenuItems(String key) {
 		return menuItems.get(key);
 	}
+
 	// 상품 생성 리스트 추가
 	public void addItemToMenu(String menu, Item item) {
 		List<Item> menuList = menuItems.get(menu);
@@ -81,6 +82,15 @@ class MenuContext {
 		}
 
 		menuList.add(item);
+	}
+
+	// 상품 삭제 리스트 추가
+	public void deleteItemFromMenu(String menu, Item item) {
+		List<Item> menuList = menuItems.get(menu);
+
+		if (menuList != null) {
+			menuList.remove(item);
+		}
 	}
 
 	public List<Order> getWaitingOrders() {
@@ -123,12 +133,12 @@ class MenuContext {
 		cart.clear();
 		totalPrice = 0.0;
 	}
-	
+
 	public void addToWaitingOrder(Order order){
 		// 주문 완료 후에 실행
 		waitingOrders.add(order);
 	}
-	
+
 	public void addToCompleteOrder(Order order) {
 		// 관리자 페이지에서 주문 처리 완료 후에 싫행
 		completedOrders.add(order);

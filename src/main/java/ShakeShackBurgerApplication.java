@@ -100,13 +100,13 @@ public class ShakeShackBurgerApplication {
 	// 모든 주문 상세 출력
 	private static void printOrders(List<Order> orders) {
 		for (int i=0; i<orders.size(); i++) {
-			printOrder(orders.get(i),i);
+			printOrder(orders.get(i));
 			System.out.println();
 		}// for() of the end
 	}// printOrders() of the end
 
 	// 선택한 주문 내역 출력
-	private static void printOrder(Order selectedOrder, int input) {
+	private static void printOrder(Order selectedOrder) {
 		int num = selectedOrder.getOrderNum();
 		System.out.println("대기 번호 : " + num);
 		System.out.println("주문 상품 목록 : ");
@@ -147,29 +147,34 @@ public class ShakeShackBurgerApplication {
 	// 주문 완료 처리할 메서드
 	private static void handleWaitingOrders(List<Order> orders) {
 		Scanner scanner = new Scanner(System.in);
-		int input = scanner.nextInt();
+		int input = scanner.nextInt(); // 선택한 주문 번호
+		Order selectedOrder = new Order(); // 선택한 주문
+		boolean hasSelectedOrder = false; // 입력한 대기 번호에 맞는 주문이 있는지 여부
 
-		if (input >= 1 && input <= orders.size()) {
-			input--;
-			for(Order order : orders){
-				if(order.getOrderNum()==input){
-					Order selectedOrder = orders.get(input);
-					confirmCompleteOrder(selectedOrder,input);
-				}
-			}
-		} else {
-			System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+		for (Order order : orders) {
+			if (order.getOrderNum() == input) {
+				System.out.println("처리할 주문 존재함.");
+				selectedOrder = order;
+				hasSelectedOrder = true;
+			}// if() of the end
+		}// for() of the end
+
+		if (hasSelectedOrder) { // 입력받은 번호에 맞는 주문이 있을 경우
+			confirmCompleteOrder(selectedOrder);
+		} else { // 입력받은 번호에 맞는 주문이 없을 경우
+			System.out.println("해당 번호에 맞는 주문이 없습니다.");
+			System.out.println("다시 입력해주세요.");
 			handleWaitingOrders(orders);
 		}// if~else() of the end
+
 	}// handleWaitingOrders() of the end
 
 	// 주문 완료 처리
-	private static void confirmCompleteOrder(Order selectedOrder, int input) {
+	private static void confirmCompleteOrder(Order selectedOrder) {
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("아래 주문을 완료 처리 하시겠습니까?\n");
-		//if(menuContext.getWaitingOrders().contains(selectedOrder)) {
-			printOrder(selectedOrder, selectedOrder.getOrderNum());
-		//}
+
+		printOrder(selectedOrder);
 
 		System.out.println("1. 완료      2. 메뉴판");
 		int confirm = scanner.nextInt();
@@ -185,7 +190,7 @@ public class ShakeShackBurgerApplication {
 			displayMainMenu();
 		}else {
 			System.out.println("잘못된 입력입니다.");
-			confirmCompleteOrder(selectedOrder,input);
+			confirmCompleteOrder(selectedOrder);
 		}// if~else() of the end
 	}// completeOrder() of the end
 

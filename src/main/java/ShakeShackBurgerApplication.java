@@ -83,6 +83,7 @@ public class ShakeShackBurgerApplication {
 		System.out.println("2. 완료주문 목록");
 		System.out.println("3. 상품 생성");
 		System.out.println("4. 상품 삭제");
+		System.out.println("5. 메인 페이지");
 		System.out.print("항목을 선택하세요: ");
 
 		int input = 0;
@@ -259,7 +260,11 @@ public class ShakeShackBurgerApplication {
 		System.out.println("처리 완료된 주문 목록입니다.\n");
 
 		System.out.println("[ 완료 주문 목록 ]");
-		printOrders(menuContext.getCompletedOrders());
+		if(!menuContext.getCompletedOrders().isEmpty()) {
+			printOrders(menuContext.getCompletedOrders());
+		}else{
+			System.out.println("완료된 주문이 없습니다.");
+		}// if~else() of the end
 		System.out.println("========================================");
 
 		System.out.println("1. 메뉴판");
@@ -404,12 +409,21 @@ public class ShakeShackBurgerApplication {
 		List<Order> waitingOrders = menuContext.getWaitingOrders();
 		if(waitingOrders.isEmpty()){
 			System.out.println("대기 중인 주문이 없습니다.");
-			System.out.println("========================================");
 		}else {
 			printOrders(waitingOrders);
+		}// if~else() of the end
+		System.out.println("========================================");
+
+		System.out.println("처리가 완료된 주문 목록입니다.\n");
+		System.out.println("[ 최근 주문 완료 목록 ]");
+		try {
+			printRecentOrders(menuContext.getCompletedOrders());
+			System.out.println("완료된 주문이 없습니다.");
+			System.out.println("========================================\n");
+		}catch (Exception e){
+			System.out.println("잘못된 요청입니다.");
+			displayMainMenu();
 		}
-		System.out.println("[ 최근주문완료 목록 ]");
-		printRecentOrders(menuContext.getCompletedOrders());
 		displayMainMenu();
 	}
 
@@ -436,14 +450,6 @@ public class ShakeShackBurgerApplication {
 			System.out.println("잘못된 요청입니다. 다시 입력해주세요.!!!");
 			handleMenuItemInput(items);
 		}
-//		if (input > 0 && input <= items.size()) {
-//			input--;
-//			Item selectedItem = items.get(input);
-//			displayConfirmation(selectedItem);
-//		} else {
-//			System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
-//			handleMenuItemInput(items);
-//		}
 	}
 
 	private static void printMenuItems(List<Item> items) {
@@ -518,15 +524,19 @@ public class ShakeShackBurgerApplication {
 	}
 
 	private static void displayOrderMenu() {
-		System.out.println("아래와 같이 주문 하시겠습니까?\n");
-		menuContext.displayCart();
+		if(menuContext.getCart().isEmpty()){
+			System.out.println("장바구니에 담긴 상품이 없습니다.");
+			displayMainMenu();
+		}else {
+			System.out.println("아래와 같이 주문 하시겠습니까?\n");
+			menuContext.displayCart();
 
-		System.out.println("[ Total ]");
-		System.out.printf("W %.1f\n",menuContext.getTotalPrice());
-		System.out.println("1. 주문      2. 메뉴판");
-
+			System.out.println("[ Total ]");
+			System.out.printf("W %.1f\n", menuContext.getTotalPrice());
+			System.out.println("1. 주문      2. 메뉴판");
+		}// if~else() of the end
 		handleOrderMenuInput();
-	}
+	}// displayOrderMenu() of the end
 
 	private static void handleOrderMenuInput() {
 		Scanner scanner = new Scanner(System.in);
@@ -595,10 +605,15 @@ public class ShakeShackBurgerApplication {
 	}
 
 	private static void handleCancelMenuInput() {
-		System.out.println("주문을 취소하시겠습니까?");
-		System.out.println("1. 확인        2. 취소");
+		if(!menuContext.getCart().isEmpty()) {
+			System.out.println("주문을 취소하시겠습니까?");
+			System.out.println("1. 확인        2. 취소");
 
-		handleCancelConfirmationInput();
+			handleCancelConfirmationInput();
+		}else {
+			System.out.println("취소할 주문이 없습니다.");
+			displayMainMenu();
+		}
 	}
 
 	private static void handleCancelConfirmationInput() {

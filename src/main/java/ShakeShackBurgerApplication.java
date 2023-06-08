@@ -34,13 +34,7 @@ public class ShakeShackBurgerApplication {
 
 	private static void handleMainMenuInput() {
 		Scanner scanner = new Scanner(System.in);
-		int input = 0;
-		try{
-			input = scanner.nextInt();
-		}catch (InputMismatchException e){
-			System.out.println("잘못된 요청입니다. 다시 입력해주세요");
-			displayMainMenu();
-		}
+		int input = scanner.nextInt();
 		switch (input) {
 			case 0: // 메인페이지에서 0번 관리자 페이지인거 명시 안함.
 				displayAdminMenu();
@@ -85,14 +79,7 @@ public class ShakeShackBurgerApplication {
 		System.out.println("4. 상품 삭제");
 		System.out.print("항목을 선택하세요: ");
 
-		int input = 0;
-
-		try{
-			input = scanner.nextInt();
-		}catch (Exception e){
-			System.out.println("잘못된 요청입니다. 다시 입력해주세요.");
-		}
-
+		int input = scanner.nextInt();
 		switch (input) {
 			case 1:
 				displayWaitingOrder();
@@ -263,13 +250,7 @@ public class ShakeShackBurgerApplication {
 		System.out.println("========================================");
 
 		System.out.println("1. 메뉴판");
-		int input = 0;
-		try{
-			input = scanner.nextInt();
-		}catch (Exception e){
-			System.out.println("잘못된 요청입니다. 다시 입력하세요!");
-			printCompletedOrder();
-		}
+		int input = scanner.nextInt();
 		if(input==1){
 			System.out.println("========================================");
 			displayMainMenu();
@@ -286,21 +267,13 @@ public class ShakeShackBurgerApplication {
 
 		System.out.println("삭제할 상품 정보를 입력해주세요.");
 		System.out.print("메뉴: ");
-		int menu = 0;
-		try{
-			menu = scanner.nextInt();
-		}catch (Exception e){
-			System.out.println("잘못된 요청입니다. 다시 입력하세요.");
-			deleteItem();
-		}
+		int menu = scanner.nextInt();
 		scanner.nextLine();
 
 		System.out.print("이름: ");
 		String name = scanner.nextLine();
 
-		int menuSize = menuContext.getMenus("Main").size();
-
-		if (menu >= 1 && menu <= menuSize) {
+		if (menu >= 1 && menu <= 4) {
 			boolean isMenuExist = findDeleteMenu(menu, name);
 			if (isMenuExist) {
 				System.out.println("상품이 삭제되었습니다.\n");
@@ -351,26 +324,14 @@ public class ShakeShackBurgerApplication {
 
 		System.out.println("새로운 상품 정보를 입력해주세요.");
 		System.out.print("메뉴: ");
-		int menu = 0;
-		try{
-			menu = scanner.nextInt();
-		}catch (Exception e){
-			System.out.println("잘못된 요청입니다. 다시입력해주세요!");
-			createItem();
-		}
+		int menu = scanner.nextInt();
 		scanner.nextLine();
 		System.out.print("이름: ");
 		String name = scanner.nextLine();
 		System.out.print("설명: ");
 		String description = scanner.nextLine();
 		System.out.print("가격: ");
-		Double price = 0.0;
-		try{
-			price = scanner.nextDouble();
-		}catch (Exception e){
-			System.out.println("잘못된 요청입니다. 다시입력해주세요!");
-			createItem();
-		}
+		Double price = scanner.nextDouble();
 
 		// 새로운 상품 생성
 		Item newItem = new Item(name, price, description);
@@ -426,24 +387,15 @@ public class ShakeShackBurgerApplication {
 
 	private static void handleMenuItemInput(List<Item> items) {
 		Scanner scanner = new Scanner(System.in);
-		int input = 0;
-		try{
-			input = scanner.nextInt();
+		int input = scanner.nextInt();
+		if (input > 0 && input <= items.size()) {
 			input--;
 			Item selectedItem = items.get(input);
 			displayConfirmation(selectedItem);
-		}catch (Exception e){
-			System.out.println("잘못된 요청입니다. 다시 입력해주세요.!!!");
+		} else {
+			System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
 			handleMenuItemInput(items);
 		}
-//		if (input > 0 && input <= items.size()) {
-//			input--;
-//			Item selectedItem = items.get(input);
-//			displayConfirmation(selectedItem);
-//		} else {
-//			System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
-//			handleMenuItemInput(items);
-//		}
 	}
 
 	private static void printMenuItems(List<Item> items) {
@@ -496,15 +448,7 @@ public class ShakeShackBurgerApplication {
 
 	private static void handleConfirmationInput(Item menuItem) {
 		Scanner scanner = new Scanner(System.in);
-		int input = 0;
-
-		try{
-			input = scanner.nextInt();
-		}catch (InputMismatchException e){
-			System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
-			handleConfirmationInput(menuItem);
-		}
-
+		int input = scanner.nextInt();
 		if (input == 1) {
 			menuContext.addToCart(menuItem);
 			System.out.println("장바구니에 추가되었습니다.");
@@ -530,15 +474,7 @@ public class ShakeShackBurgerApplication {
 
 	private static void handleOrderMenuInput() {
 		Scanner scanner = new Scanner(System.in);
-		int input = 0;
-
-		try{
-			input = scanner.nextInt();
-		}catch (Exception e){
-			System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
-			handleOrderMenuInput();
-		}
-
+		int input = scanner.nextInt();
 		if (input == 1) {
 			displayOrderComplete();
 		} else if (input == 2) {
@@ -603,13 +539,7 @@ public class ShakeShackBurgerApplication {
 
 	private static void handleCancelConfirmationInput() {
 		Scanner scanner = new Scanner(System.in);
-		int input = 0;
-		try{
-			input = scanner.nextInt();
-		}catch (Exception e){
-			System.out.println("잘못된 요청입니다. 다시 입력해주세요.");
-			handleCancelConfirmationInput();
-		}
+		int input = scanner.nextInt();
 		if (input == 1) {
 			menuContext.resetCart();
 			System.out.println("주문이 취소되었습니다.");

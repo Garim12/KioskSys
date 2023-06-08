@@ -74,6 +74,7 @@ public class ShakeShackBurgerApplication {
 		System.out.println("2. 완료주문 목록");
 		System.out.println("3. 상품 생성");
 		System.out.println("4. 상품 삭제");
+		System.out.println("5. 최근주문완료 목록");
 		System.out.print("항목을 선택하세요: ");
 
 		int input = scanner.nextInt();
@@ -91,6 +92,9 @@ public class ShakeShackBurgerApplication {
 				deleteItem();
 				break;
 			case 5:
+				RecentOrder();
+				break;
+			case 6:
 				displayMainMenu();
 			default:
 				System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
@@ -107,6 +111,16 @@ public class ShakeShackBurgerApplication {
 		}// for() of the end
 	}// printOrders() of the end
 
+	private static void printRecentOrders(List<Order> orders) { //
+		int tempNum=orders.size()-3;
+		if (tempNum < 0){
+			tempNum =0;
+		}
+		for (int i = tempNum; i < orders.size(); i++) {
+			printOrder(orders.get(i));
+			System.out.println();
+		}
+	}
 	// 선택한 주문 내역 출력
 	private static void printOrder(Order selectedOrder) {
 		int num = selectedOrder.getOrderNum();
@@ -325,7 +339,22 @@ public class ShakeShackBurgerApplication {
 		System.out.println("새로운 상품이 생성되었습니다.");
 		displayMainMenu();
 	}
+	private  static void RecentOrder(){
+		System.out.println("========================================");
+		System.out.println("대기 중인 주문 목록입니다.\n");
 
+		System.out.println("[ 대기 주문 목록 ]");
+		List<Order> waitingOrders = menuContext.getWaitingOrders();
+		if(waitingOrders.isEmpty()){
+			System.out.println("대기 중인 주문이 없습니다.");
+			System.out.println("========================================");
+		}else {
+			printOrders(waitingOrders);
+		}
+		System.out.println("[ 최근주문완료 목록 ]");
+		printRecentOrders(menuContext.getCompletedOrders());
+		displayMainMenu();
+	}
 
 	private static void displayBurgersMenu() {
 		System.out.println("SHAKESHACK BURGER 에 오신걸 환영합니다.");

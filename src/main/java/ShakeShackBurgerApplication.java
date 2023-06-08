@@ -20,8 +20,8 @@ public class ShakeShackBurgerApplication {
 
 		System.out.println("[ ORDER MENU ]");
 		List<Menu> orderMenus = menuContext.getMenus("Order");
-		printMenu(orderMenus, nextNum);
-
+		nextNum=printMenu(orderMenus, nextNum);
+		System.out.println(nextNum+". recent orders |   완료된 최근주문 3개와 현재 대기중인 주문들을 보여줍니다");
 		handleMainMenuInput();
 	}
 
@@ -56,6 +56,9 @@ public class ShakeShackBurgerApplication {
 				break;
 			case 6:
 				handleCancelMenuInput();
+				break;
+			case 7:
+				RecentOrder();
 				break;
 			default:
 				System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
@@ -107,6 +110,21 @@ public class ShakeShackBurgerApplication {
 		}// for() of the end
 	}// printOrders() of the end
 
+	private static void printRecentOrders(List<Order> orders) { //
+		int tempNum=orders.size()-3;
+		if (tempNum < 0){
+			tempNum =0;
+		}
+		for (int i = tempNum; i < orders.size(); i++) {
+			printOrder(orders.get(i));
+			Date date = orders.get(i).getCompleteDate();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:XXX");
+			sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+			String dateString = sdf.format(date);
+			System.out.println("완료 일시: " + dateString);
+			System.out.println();
+		}
+	}
 	// 선택한 주문 내역 출력
 	private static void printOrder(Order selectedOrder) {
 		int num = selectedOrder.getOrderNum();
@@ -123,7 +141,6 @@ public class ShakeShackBurgerApplication {
 		String dateString = sdf.format(date);
 		System.out.println("주문 일시: " + dateString);
 	}// printOrder() of the end
-
 
 
 	// 1. 대기 중인 주문 조회 및 완료 화면
@@ -155,7 +172,6 @@ public class ShakeShackBurgerApplication {
 
 		for (Order order : orders) {
 			if (order.getOrderNum() == input) {
-				System.out.println("처리할 주문 존재함.");
 				selectedOrder = order;
 				hasSelectedOrder = true;
 			}// if() of the end
@@ -225,7 +241,7 @@ public class ShakeShackBurgerApplication {
 	// 2. 주문 완료 목록 출력
 	private static void printCompletedOrder() {
 		Scanner scanner = new Scanner(System.in);
-		
+
 		System.out.println("========================================");
 		System.out.println("처리 완료된 주문 목록입니다.\n");
 
@@ -247,8 +263,59 @@ public class ShakeShackBurgerApplication {
 
 	// 3. 상품 삭제
 	private static void deleteItem() {
+		Scanner scanner = new Scanner(System.in);
 
-		displayMainMenu();
+		System.out.println("삭제할 상품 정보를 입력해주세요.");
+		System.out.print("메뉴: ");
+		int menu = scanner.nextInt();
+		scanner.nextLine();
+
+		System.out.print("이름: ");
+		String name = scanner.nextLine();
+
+		if (menu >= 1 && menu <= 4) {
+			boolean isMenuExist = findDeleteMenu(menu, name);
+			if (isMenuExist) {
+				System.out.println("상품이 삭제되었습니다.\n");
+				displayMainMenu();
+			}
+			else {
+				System.out.println("해당 상품이 존재하지 않습니다.\n");
+				int wantResult = wantToMainOrAgain();
+				if(wantResult==2) {
+					deleteItem();
+				}else {
+					displayMainMenu();
+				}// inner1 if~else() of the end
+			}// inner2 if~else() of the end
+		} else {
+			System.out.println("잘못된 메뉴입니다.");
+			deleteItem();
+		}// outer if~else() of the end
+	}// deleteItem() of the end
+
+	// 메뉴판으로 돌아갈건지 아닌지 묻기.
+	private static int wantToMainOrAgain() {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("1. 메뉴판  2. 상품삭제");
+
+		int result = scanner.nextInt();
+
+		return result;
+	}
+
+	public static boolean findDeleteMenu(int menu, String name) {
+		ArrayList<String> menuNames = new ArrayList<>(Arrays.asList("Burgers", "Frozen Custard", "Drinks", "Beer"));
+		for (Item item : menuContext.getMenuItems(menuNames.get(menu - 1))) {
+			if (item.getName().equals(name)) {
+				if (!menuContext.getMenuItems(menuNames.get(menu - 1)).isEmpty()) {
+					menuContext.deleteItemFromMenu(menuNames.get(menu - 1), item);
+					return true;
+				}
+				else return false;
+			}
+		}
+		return false;
 	}
 
 	// 4. 상품 생성
@@ -290,9 +357,22 @@ public class ShakeShackBurgerApplication {
 		System.out.println("새로운 상품이 생성되었습니다.");
 		displayMainMenu();
 	}
+	private static void RecentOrder(){
+		System.out.println("========================================");
+		System.out.println("대기 중인 주문 목록입니다.\n");
 
-
-
+		System.out.println("[ 대기 주문 목록 ]");
+		List<Order> waitingOrders = menuContext.getWaitingOrders();
+		if(waitingOrders.isEmpty()){
+			System.out.println("대기 중인 주문이 없습니다.");
+			System.out.println("========================================");
+		}else {
+			printOrders(waitingOrders);
+		}
+		System.out.println("[ 최근주문완료 목록 ]");
+		printRecentOrders(menuContext.getCompletedOrders());
+		displayMainMenu();
+	}
 
 	private static void displayBurgersMenu() {
 		System.out.println("SHAKESHACK BURGER 에 오신걸 환영합니다.");
@@ -386,7 +466,7 @@ public class ShakeShackBurgerApplication {
 		menuContext.displayCart();
 
 		System.out.println("[ Total ]");
-		System.out.println("W " + menuContext.getTotalPrice() + "\n");
+		System.out.printf("W %.1f\n",menuContext.getTotalPrice());
 		System.out.println("1. 주문      2. 메뉴판");
 
 		handleOrderMenuInput();

@@ -1,12 +1,12 @@
 import java.util.List;
 
-class Menu {
+public class Menu {
 	String name;
 	String description;
 	List<Item> items; // 2번 필수 요구 사항
 
 	// 생성자 메서드 영역
-	Menu(String name, String description) {
+	public Menu(String name, String description) {
 		this.name = name;
 		this.description = description;
 	}

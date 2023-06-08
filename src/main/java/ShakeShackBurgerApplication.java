@@ -117,6 +117,11 @@ public class ShakeShackBurgerApplication {
 		}
 		for (int i = tempNum; i < orders.size(); i++) {
 			printOrder(orders.get(i));
+			Date date = orders.get(i).getCompleteDate();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:XXX");
+			sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+			String dateString = sdf.format(date);
+			System.out.println("완료 일시: " + dateString);
 			System.out.println();
 		}
 	}
@@ -167,7 +172,6 @@ public class ShakeShackBurgerApplication {
 
 		for (Order order : orders) {
 			if (order.getOrderNum() == input) {
-				System.out.println("처리할 주문 존재함.");
 				selectedOrder = order;
 				hasSelectedOrder = true;
 			}// if() of the end
@@ -277,12 +281,27 @@ public class ShakeShackBurgerApplication {
 			}
 			else {
 				System.out.println("해당 상품이 존재하지 않습니다.\n");
-				deleteItem();
-			}
+				int wantResult = wantToMainOrAgain();
+				if(wantResult==2) {
+					deleteItem();
+				}else {
+					displayMainMenu();
+				}// inner1 if~else() of the end
+			}// inner2 if~else() of the end
 		} else {
 			System.out.println("잘못된 메뉴입니다.");
 			deleteItem();
-		}
+		}// outer if~else() of the end
+	}// deleteItem() of the end
+
+	// 메뉴판으로 돌아갈건지 아닌지 묻기.
+	private static int wantToMainOrAgain() {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("1. 메뉴판  2. 상품삭제");
+
+		int result = scanner.nextInt();
+
+		return result;
 	}
 
 	public static boolean findDeleteMenu(int menu, String name) {
@@ -338,7 +357,7 @@ public class ShakeShackBurgerApplication {
 		System.out.println("새로운 상품이 생성되었습니다.");
 		displayMainMenu();
 	}
-	private  static void RecentOrder(){
+	private static void RecentOrder(){
 		System.out.println("========================================");
 		System.out.println("대기 중인 주문 목록입니다.\n");
 
@@ -447,7 +466,7 @@ public class ShakeShackBurgerApplication {
 		menuContext.displayCart();
 
 		System.out.println("[ Total ]");
-		System.out.println("W " + menuContext.getTotalPrice() + "\n");
+		System.out.printf("W %.1f\n",menuContext.getTotalPrice());
 		System.out.println("1. 주문      2. 메뉴판");
 
 		handleOrderMenuInput();

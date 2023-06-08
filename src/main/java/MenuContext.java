@@ -3,7 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class MenuContext {
+public class MenuContext {
 	private Map<String, List<Menu>> menus;
 	private Map<String, List<Item>> menuItems;
 	private List<Item> cart;

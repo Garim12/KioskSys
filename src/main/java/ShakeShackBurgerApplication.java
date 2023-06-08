@@ -20,8 +20,8 @@ public class ShakeShackBurgerApplication {
 
 		System.out.println("[ ORDER MENU ]");
 		List<Menu> orderMenus = menuContext.getMenus("Order");
-		printMenu(orderMenus, nextNum);
-
+		nextNum=printMenu(orderMenus, nextNum);
+		System.out.println(nextNum+". recent orders |   완료된 최근주문 3개와 현재 대기중인 주문들을 보여줍니다");
 		handleMainMenuInput();
 	}
 
@@ -57,6 +57,9 @@ public class ShakeShackBurgerApplication {
 			case 6:
 				handleCancelMenuInput();
 				break;
+			case 7:
+				RecentOrder();
+				break;
 			default:
 				System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
 				handleMainMenuInput();
@@ -74,7 +77,6 @@ public class ShakeShackBurgerApplication {
 		System.out.println("2. 완료주문 목록");
 		System.out.println("3. 상품 생성");
 		System.out.println("4. 상품 삭제");
-		System.out.println("5. 최근주문완료 목록");
 		System.out.print("항목을 선택하세요: ");
 
 		int input = scanner.nextInt();
@@ -92,9 +94,6 @@ public class ShakeShackBurgerApplication {
 				deleteItem();
 				break;
 			case 5:
-				RecentOrder();
-				break;
-			case 6:
 				displayMainMenu();
 			default:
 				System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
